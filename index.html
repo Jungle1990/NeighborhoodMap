@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Neighborhood Map</title>
+        <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="" class="navbar-brand">Neighborhood Map</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <main class="row">
+                <div class="col-md-4">
+                    <input class="search-box" data-bind="textInput: keyword, valueUpdate: 'afterkeydown'" />
+                    <ul data-bind="foreach: filteredPlaces">
+                        <li data-bind="text: name"></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="map" id="map">Error while loading Google Map...</div>
+                </div>
+            </main>
+        </div>
+
+        <script src='js/knockout-3.4.2.js'></script>
+        <script src='js/jquery-3.2.1.js'></script>
+        <script src='js/bootstrap.js'></script>
+        <script src='js/app.js'></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDl7QICHPSG7SBcNINPEA1GvoL0b9iHHt0&callback=initMap"></script>
+    </body>
+</html>

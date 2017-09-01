@@ -1,0 +1,22 @@
+body {
+	padding-top: 70px;
+}
+
+.search-box {
+    flex-grow: 1;
+    height: 50px;
+    font-size: 1em;
+    padding: 5px 20px;
+}
+
+.map {
+    height: 600px;
+    width: 100%;
+}
+
+@media screen and (max-width: 960px){
+    .search-box,
+    .list {
+        font-size: 1.5em;
+    }
+}
