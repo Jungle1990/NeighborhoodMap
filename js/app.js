@@ -1,13 +1,33 @@
 'use strict';
 
 var placesData = [{
-        name: 'Bracher Park',
-        lat: 37.370,
-        long: -122.002
+        name: 'Grinder',
+        lat: 34.026559,
+        lng: -118.276675
     }, {
-        name: 'Hacker Dojo (old)',
-        lat: 37.402,
-        long: -122.052
+        name: 'Joan And Sisters Belizean Restaurant',
+        lat: 34.020780,
+        lng: -118.308982
+    }, {
+        name: 'Moreton Fig',
+        lat: 34.020227,
+        lng: -118.285859
+    }, {
+        name: 'El Parian Restaurant',
+        lat: 34.043843,
+        lng: -118.275902
+    }, {
+        name: 'Figueroa Philly Cheese Steak',
+        lat: 34.014465,
+        lng: -118.282339
+    }, {
+        name: "Jesse's Camarones Restaurant",
+        lat: 34.032818,
+        lng: -118.293755
+    }, {
+        name: 'Salad Farm',
+        lat: 34.031467,
+        lng: -118.273928
     }
 ];
 var map;
@@ -20,12 +40,12 @@ var Place = function(placeData) {
 
     self.name = placeData.name;
     self.lat = placeData.lat;
-    self.long = placeData.long;
+    self.lng = placeData.lng;
     self.address = "";
     self.country = "";
     self.visible = ko.observable(true);
 
-    var foursquareURL = 'https://api.foursquare.com/v2/venues/search?ll=' + self.lat + ',' + self.long + '&client_id=' + FOUR_SQUARE_CLIENT_ID + '&client_secret=' + FOUR_SQUARE_CLIENT_SECRET + '&v=20170901' + '&query=' + self.name;
+    var foursquareURL = 'https://api.foursquare.com/v2/venues/search?ll=' + self.lat + ',' + self.lng + '&client_id=' + FOUR_SQUARE_CLIENT_ID + '&client_secret=' + FOUR_SQUARE_CLIENT_SECRET + '&v=20170901' + '&query=' + self.name;
 
     $.getJSON(foursquareURL).done(function(data) {
         var results = data.response.venues[0];
@@ -36,7 +56,7 @@ var Place = function(placeData) {
     });
 
     self.marker = new google.maps.Marker({
-        position: new google.maps.LatLng(placeData.lat, placeData.long),
+        position: new google.maps.LatLng(placeData.lat, placeData.lng),
         map: map,
         title: placeData.name
     });
@@ -79,8 +99,8 @@ function AppViewModel() {
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
         center: {
-            lat: 37.370,
-            lng: -122.002
+            lat: 34.026559,
+            lng: -118.276675
         }
     });
 

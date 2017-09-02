@@ -20,7 +20,7 @@
         <div class="container">
             <main class="row">
                 <div class="col-md-4">
-                    <input class="search-box" data-bind="textInput: keyword, valueUpdate: 'afterkeydown'" />
+                    <input type="text" class="form-control"  data-bind="textInput: keyword, valueUpdate: 'afterkeydown'">
                     <ul data-bind="foreach: filteredPlaces">
                         <li data-bind="text: name"></li>
                     </ul>
