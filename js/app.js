@@ -1,5 +1,3 @@
-'use strict';
-
 var placesData = [{
         name: 'Grinder',
         lat: 34.026559,
