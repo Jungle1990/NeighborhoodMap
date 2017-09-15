@@ -14,7 +14,7 @@ var PlaceModel = function(name, lat, lng) {
     self.country = ko.observable("");
     self.visible = ko.observable(true);
     self.marker = ko.observable(null);
-}
+};
 
 // Initialize google map.
 var GetMap = function() {
@@ -25,7 +25,7 @@ var GetMap = function() {
             lng: -118.276675
         }
     });
-}
+};
 
 // Set up name, lat, lng for all places.
 var GetPlacesData = function() {
@@ -38,7 +38,7 @@ var GetPlacesData = function() {
         new PlaceModel("Jesse's Camarones Restaurant", 34.032818, -118.293755),
         new PlaceModel("Salad Farm", 34.031467, -118.273928)
     ]);
-}
+};
 
 // Set up address and country for all places.
 var SetPlaceDesc = function(places) {
@@ -53,7 +53,7 @@ var SetPlaceDesc = function(places) {
             console.log("Error while calling foursquare API for place \"" + place.name + "\"...");
         });
     });
-}
+};
 
 // Set up markers for all places.
 var SetPlaceMarker = function(places) {
@@ -95,7 +95,7 @@ var SetPlaceMarker = function(places) {
             }
         }, this);
     });
-}
+};
 
 // Get all visible places.
 var GetVisiblePlaces = function(places) {
@@ -104,7 +104,7 @@ var GetVisiblePlaces = function(places) {
             return place.visible();
         });
     }, this);
-}
+};
 
 /*
     Change visible status of place by filter.
@@ -124,7 +124,7 @@ var EnableFilter = function(filter, places) {
             });
         }
     }, this);
-}
+};
 
 // This contains the main functionality of the neighborhood map application.
 function AppViewModel() {
