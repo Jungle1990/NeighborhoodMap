@@ -55,6 +55,27 @@ var SetPlaceDesc = function(places) {
     });
 };
 
+// Click event handler.
+var ClickMarkerHandler = function(place) {
+    var infoHtml =
+        '<div class="info-window">' +
+        '<div class="name"><b>' + place.name + '</b></div>' +
+        '<div class="address">' + place.address() + '</div>' +
+        '<div class="country">' + place.country() + '</div>' +
+        '</div>';
+
+    var infoWindow = new google.maps.InfoWindow({
+        content: infoHtml
+    });
+    infoWindow.open(map, place.marker());
+    
+    place.marker().setAnimation(google.maps.Animation.BOUNCE);
+
+    setTimeout(function() {
+        place.marker().setAnimation(null);
+    }, 2000);
+}
+
 // Set up markers for all places.
 var SetPlaceMarker = function(places) {
     ko.utils.arrayForEach(places(), function(place) {
@@ -66,24 +87,8 @@ var SetPlaceMarker = function(places) {
         }));
 
         // Add click listener to show pop up window.
-        place.marker().addListener('click', function() {
-            var infoHtml =
-                '<div class="info-window">' +
-                '<div class="name"><b>' + place.name + '</b></div>' +
-                '<div class="address">' + place.address() + '</div>' +
-                '<div class="country">' + place.country() + '</div>' +
-                '</div>';
-
-            var infoWindow = new google.maps.InfoWindow({
-                content: infoHtml
-            });
-            infoWindow.open(map, this);
-
-            place.marker().setAnimation(google.maps.Animation.BOUNCE);
-
-            setTimeout(function() {
-                place.marker().setAnimation(null);
-            }, 2000);
+        place.marker().addListener('click', function(){
+            ClickMarkerHandler(place);
         });
 
         // Use the 'visible' protery to decide whether to show the marker.
@@ -126,6 +131,13 @@ var EnableFilter = function(filter, places) {
     }, this);
 };
 
+// Get click place handler.
+var GetClickPlaceHandler = function(){
+    return function(place) {
+        ClickMarkerHandler(place);
+    };
+};
+
 // This contains the main functionality of the neighborhood map application.
 function AppViewModel() {
     var self = this;
@@ -145,7 +157,10 @@ function AppViewModel() {
     // 3.2. Enable to filter places by name.
     EnableFilter(self.filter, self.allPlaces);
 
-    // 4. Get all visible places.
+    // 4. Bind click event to the list of places.
+    self.clickPlaceHandler = GetClickPlaceHandler();
+
+    // 5. Get all visible places.
     self.filteredPlaces = GetVisiblePlaces(self.allPlaces);
 }
 
