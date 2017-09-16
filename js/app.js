@@ -47,10 +47,14 @@ var SetPlaceDesc = function(places) {
         var foursquareURL = 'https://api.foursquare.com/v2/venues/search?ll=' + place.lat + ',' + place.lng + '&client_id=' + FOUR_SQUARE_CLIENT_ID + '&client_secret=' + FOUR_SQUARE_CLIENT_SECRET + '&v=20170901' + '&query=' + place.name;
 
         $.getJSON(foursquareURL).done(function(data) {
-            place.address(data.response.venues[0].location.formattedAddress[0]);
-            place.country(data.response.venues[0].location.formattedAddress[1]);
+            var address = data.response.venues[0].location.formattedAddress[0];
+            var country = data.response.venues[0].location.formattedAddress[1];
+            address = address ? address : "";
+            country = country ? country : "";
+            place.address(address);
+            place.country(country);
         }).fail(function() {
-            console.log("Error while calling foursquare API for place \"" + place.name + "\"...");
+            alert("Error while calling foursquare API for place \"" + place.name + "\"...");
         });
     });
 };
@@ -68,13 +72,13 @@ var ClickMarkerHandler = function(place) {
         content: infoHtml
     });
     infoWindow.open(map, place.marker());
-    
+
     place.marker().setAnimation(google.maps.Animation.BOUNCE);
 
     setTimeout(function() {
         place.marker().setAnimation(null);
     }, 2000);
-}
+};
 
 // Set up markers for all places.
 var SetPlaceMarker = function(places) {
@@ -87,7 +91,7 @@ var SetPlaceMarker = function(places) {
         }));
 
         // Add click listener to show pop up window.
-        place.marker().addListener('click', function(){
+        place.marker().addListener('click', function() {
             ClickMarkerHandler(place);
         });
 
@@ -132,10 +136,15 @@ var EnableFilter = function(filter, places) {
 };
 
 // Get click place handler.
-var GetClickPlaceHandler = function(){
+var GetClickPlaceHandler = function() {
     return function(place) {
         ClickMarkerHandler(place);
     };
+};
+
+// Handle error if google map script fails to load.
+var initMapError = function() {
+    alert("Error while loading Google Map...");
 };
 
 // This contains the main functionality of the neighborhood map application.
