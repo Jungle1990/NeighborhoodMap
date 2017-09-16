@@ -1,5 +1,5 @@
 // Global variables.
-var map;
+var map, infoWindow;
 var FOUR_SQUARE_CLIENT_ID = "N32GTWX5LEQ3PTOVSNDUXBYWNFTZ0XU1JZVO0PH4S1N2I1J2";
 var FOUR_SQUARE_CLIENT_SECRET = "KHYOMOGTGTRVMA1ZIRYBAC1XM5CON3NGZVAXRKR4USQMFDQ3";
 
@@ -17,7 +17,7 @@ var PlaceModel = function(name, lat, lng) {
 };
 
 // Initialize google map.
-var GetMap = function() {
+var getMap = function() {
     return new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
         center: {
@@ -28,7 +28,7 @@ var GetMap = function() {
 };
 
 // Set up name, lat, lng for all places.
-var GetPlacesData = function() {
+var getPlacesData = function() {
     return ko.observableArray([
         new PlaceModel("Grinder", 34.026559, -118.276675),
         new PlaceModel("Joan And Sisters Belizean Restaurant", 34.020780, -118.308982),
@@ -41,7 +41,7 @@ var GetPlacesData = function() {
 };
 
 // Set up address and country for all places.
-var SetPlaceDesc = function(places) {
+var setPlaceDesc = function(places) {
     ko.utils.arrayForEach(places(), function(place) {
         // Call four square API parsing lat and lng to get "address" and "country" of the place.
         var foursquareURL = 'https://api.foursquare.com/v2/venues/search?ll=' + place.lat + ',' + place.lng + '&client_id=' + FOUR_SQUARE_CLIENT_ID + '&client_secret=' + FOUR_SQUARE_CLIENT_SECRET + '&v=20170901' + '&query=' + place.name;
@@ -60,7 +60,7 @@ var SetPlaceDesc = function(places) {
 };
 
 // Click event handler.
-var ClickMarkerHandler = function(place) {
+var clickMarkerHandler = function(place) {
     var infoHtml =
         '<div class="info-window">' +
         '<div class="name"><b>' + place.name + '</b></div>' +
@@ -68,9 +68,7 @@ var ClickMarkerHandler = function(place) {
         '<div class="country">' + place.country() + '</div>' +
         '</div>';
 
-    var infoWindow = new google.maps.InfoWindow({
-        content: infoHtml
-    });
+    infoWindow.setContent(infoHtml);
     infoWindow.open(map, place.marker());
 
     place.marker().setAnimation(google.maps.Animation.BOUNCE);
@@ -81,7 +79,7 @@ var ClickMarkerHandler = function(place) {
 };
 
 // Set up markers for all places.
-var SetPlaceMarker = function(places) {
+var setPlaceMarker = function(places) {
     ko.utils.arrayForEach(places(), function(place) {
         // Add marker.
         place.marker(new google.maps.Marker({
@@ -92,7 +90,7 @@ var SetPlaceMarker = function(places) {
 
         // Add click listener to show pop up window.
         place.marker().addListener('click', function() {
-            ClickMarkerHandler(place);
+            clickMarkerHandler(place);
         });
 
         // Use the 'visible' protery to decide whether to show the marker.
@@ -107,7 +105,7 @@ var SetPlaceMarker = function(places) {
 };
 
 // Get all visible places.
-var GetVisiblePlaces = function(places) {
+var getVisiblePlaces = function(places) {
     return ko.computed(function() {
         return ko.utils.arrayFilter(places(), function(place) {
             return place.visible();
@@ -119,7 +117,7 @@ var GetVisiblePlaces = function(places) {
     Change visible status of place by filter.
     If name of palce matches the filter, set the place visible, else set it invisible.
 */
-var EnableFilter = function(filter, places) {
+var enableFilter = function(filter, places) {
     ko.computed(function() {
         var filterStr = filter().toLowerCase();
         if (!filterStr) {
@@ -136,10 +134,15 @@ var EnableFilter = function(filter, places) {
 };
 
 // Get click place handler.
-var GetClickPlaceHandler = function() {
+var getClickPlaceHandler = function() {
     return function(place) {
-        ClickMarkerHandler(place);
+        clickMarkerHandler(place);
     };
+};
+
+// Initialize info window.
+var getInfoWindow = function() {
+    return new google.maps.InfoWindow();
 };
 
 // Handle error if google map script fails to load.
@@ -152,25 +155,28 @@ function AppViewModel() {
     var self = this;
 
     // 1. Initialize google map.
-    map = GetMap();
+    map = getMap();
 
-    // 2.1. Set up initial places' data, including name, lat and lng.
-    self.allPlaces = GetPlacesData();
-    // 2.2. Query places' description (address, country) using four square API.
-    SetPlaceDesc(self.allPlaces);
+    // 2. Initialize info window.
+    infoWindow = getInfoWindow();
+
+    // 3.1. Set up initial places' data, including name, lat and lng.
+    self.allPlaces = getPlacesData();
+    // 3.2. Query places' description (address, country) using four square API.
+    setPlaceDesc(self.allPlaces);
     // 3.3. Add markers to places, and bind a click event to it to show information window.
-    SetPlaceMarker(self.allPlaces);
+    setPlaceMarker(self.allPlaces);
 
-    // 3.1. Define search string to filter places.
+    // 4.1. Define search string to filter places.
     self.filter = ko.observable("");
-    // 3.2. Enable to filter places by name.
-    EnableFilter(self.filter, self.allPlaces);
+    // 4.2. Enable to filter places by name.
+    enableFilter(self.filter, self.allPlaces);
 
-    // 4. Bind click event to the list of places.
-    self.clickPlaceHandler = GetClickPlaceHandler();
+    // 5. Bind click event to the list of places.
+    self.clickPlaceHandler = getClickPlaceHandler();
 
-    // 5. Get all visible places.
-    self.filteredPlaces = GetVisiblePlaces(self.allPlaces);
+    // 6. Get all visible places.
+    self.filteredPlaces = getVisiblePlaces(self.allPlaces);
 }
 
 /*
